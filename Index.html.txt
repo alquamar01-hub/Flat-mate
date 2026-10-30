@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#4f46e5">
+<title>Flat Khata</title>
+<link rel="manifest" href="manifest.json">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#f1f5f9; --card:#ffffff; --text:#0f172a; --muted:#64748b;
+    --green:#16a34a; --green-l:#f0fdf4;
+    --red:#dc2626;  --red-l:#fef2f2;
+    --indigo:#4f46e5; --indigo-l:#eef2ff;
+    --border:#e2e8f0;
+  }
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    background:var(--bg);color:var(--text);font-size:15px;line-height:1.45;
+    padding-bottom:40px;
+  }
+  .app{max-width:520px;margin:0 auto;padding:14px 12px 0}
+
+  header{margin-bottom:14px}
+  .mlabel{display:block;font-size:11px;font-weight:800;text-transform:uppercase;
+          letter-spacing:.7px;color:var(--muted);margin-bottom:6px;padding-left:2px}
+  #monthPicker{
+    width:100%;padding:13px 14px;border:1.5px solid var(--border);background:#fff;
+    border-radius:14px;font-size:16px;font-family:inherit;font-weight:700;
+    color:var(--text);outline:none;transition:.15s;
+  }
+  #monthPicker:focus{border-color:#0f172a;box-shadow:0 0 0 3px #e2e8f0}
+
+  /* ---- 3 TABS ---- */
+  .tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+  .tab{
+    border:2px solid transparent;background:var(--card);border-radius:16px;
+    padding:12px 8px;text-align:left;cursor:pointer;font-family:inherit;
+    transition:.18s;box-shadow:0 1px 3px rgba(15,23,42,.05);
+  }
+  .tab .tl{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  .tab .tv{font-size:17px;font-weight:800;letter-spacing:-.5px;margin-top:3px}
+  .tab.rev .tv{color:var(--green)}
+  .tab.exp .tv{color:var(--red)}
+  .tab.bal .tv{color:var(--indigo)}
+  .tab.rev.active{border-color:var(--green);background:var(--green-l);box-shadow:0 4px 14px rgba(22,163,74,.14)}
+  .tab.exp.active{border-color:var(--red);background:var(--red-l);box-shadow:0 4px 14px rgba(220,38,38,.14)}
+  .tab.bal.active{border-color:var(--indigo);background:var(--indigo-l);box-shadow:0 4px 14px rgba(79,70,229,.14)}
+  .tab:active{transform:scale(.985)}
+
+  .panel{display:none}
+  .panel.active{display:block;animation:fade .18s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+  /* ---- REVENUE ---- */
+  .rev-row{display:flex;gap:8px;margin-bottom:9px;align-items:center}
+  .rev-row input{
+    border:1.5px solid var(--border);background:#fff;border-radius:13px;
+    padding:13px 12px;font-size:15px;font-family:inherit;color:var(--text);
+    outline:none;transition:.15s;
+  }
+  .rev-row input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--green-l)}
+  .in-name{flex:1;min-width:0;font-weight:600}
+  .in-amt{width:112px;text-align:right;font-weight:800}
+  .in-amt::-webkit-outer-spin-button,.in-amt::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .in-amt{-moz-appearance:textfield}
+
+  /* ---- EXPENSE FORM ---- */
+  .exp-form{
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:12px;margin-bottom:14px;box-shadow:0 1px 3px rgba(15,23,42,.05);
+  }
+  .frow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+  .frow:last-child{margin-bottom:0}
+  .frow.two{grid-template-columns:1fr 58px}
+  .frow input{
+    width:100%;padding:12px;border:1.5px solid var(--border);background:#f8fafc;
+    border-radius:12px;font-size:15px;font-family:inherit;color:var(--text);
+    outline:none;transition:.15s;min-width:0;
+  }
+  .frow input:focus{border-color:var(--red);background:#fff;box-shadow:0 0 0 3px var(--red-l)}
+  .frow input::-webkit-outer-spin-button,.frow input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .frow input[type=number]{-moz-appearance:textfield}
+  .addbtn{
+    border:none;background:var(--red);color:#fff;border-radius:12px;
+    font-size:24px;font-weight:700;font-family:inherit;cursor:pointer;
+    line-height:1;transition:.15s;display:flex;align-items:center;justify-content:center;
+  }
+  .addbtn:active{background:#b91c1c;transform:scale(.96)}
+
+  .exp-item{
+    display:flex;align-items:center;gap:10px;background:var(--card);
+    border:1px solid var(--border);border-radius:14px;padding:11px 12px;
+    margin-bottom:8px;box-shadow:0 1px 2px rgba(15,23,42,.04);
+  }
+  .exp-item .info{flex:1;min-width:0}
+  .exp-item .it{font-size:14.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .exp-item .id{font-size:12px;color:var(--muted);margin-top:1px}
+  .exp-item .amt{font-size:15px;font-weight:800;color:var(--red);white-space:nowrap}
+  .exp-item .del{
+    border:none;background:var(--red-l);color:var(--red);width:27px;height:27px;
+    border-radius:9px;font-size:13px;font-weight:800;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+
+  .sumline{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 4px 6px;margin-top:8px;border-top:1.5px dashed var(--border);
+    font-size:13px;font-weight:700;color:var(--muted);
+    text-transform:uppercase;letter-spacing:.5px;
+  }
+  .sumline b{font-size:19px;letter-spacing:-.4px;color:var(--green)}
+  .sumline.red b{color:var(--red)}
+
+  /* ---- BALANCE PANEL ---- */
+  .bal-box{
+    background:var(--card);border:1px solid var(--border);border-radius:20px;
+    padding:22px 18px;box-shadow:0 2px 8px rgba(15,23,42,.06);text-align:center;
+  }
+  .bal-lbl{font-size:11.5px;font-weight:800;text-transform:uppercase;
+           letter-spacing:.7px;color:var(--muted);margin-bottom:6px}
+  .bal-val{font-size:38px;font-weight:800;letter-spacing:-1.2px;color:var(--indigo);margin-bottom:20px}
+  .bal-val.neg{color:var(--red)}
+  .bal-rows{
+    text-align:left;border-top:1.5px dashed var(--border);padding-top:14px;
+  }
+  .bal-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:9px 0;font-size:14px;font-weight:600;color:var(--muted);
+  }
+  .bal-row span:first-child{color:#475569}
+  .bal-row b{font-size:15px;font-weight:800;letter-spacing:-.3px}
+  .bal-row .g{color:var(--green)}
+  .bal-row .r{color:var(--red)}
+  .bal-row.total{
+    border-top:1px solid var(--border);margin-top:4px;padding-top:12px;
+    font-size:14px;color:var(--text);
+  }
+  .bal-row.total b{font-size:17px;color:var(--indigo)}
+  .bal-row.total b.neg{color:var(--red)}
+
+  .empty{text-align:center;color:#94a3b8;font-size:13.5px;padding:26px 0}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <label class="mlabel" for="monthPicker">Month &amp; Year</label>
+    <input type="month" id="monthPicker">
+  </header>
+
+  <!-- ===== 3 COLUMNS ===== -->
+  <div class="tabs">
+    <button class="tab rev active" data-tab="revenue">
+      <div class="tl">Revenue</div>
+      <div class="tv" id="revTotal">₹0</div>
+    </button>
+    <button class="tab exp" data-tab="expense">
+      <div class="tl">Expenses</div>
+      <div class="tv" id="expTotal">₹0</div>
+    </button>
+    <button class="tab bal" data-tab="balance">
+      <div class="tl">Balance</div>
+      <div class="tv" id="balTotal">₹0</div>
+    </button>
+  </div>
+
+  <!-- ===== REVENUE PANEL ===== -->
+  <section class="panel active" id="panel-revenue">
+    <div id="revList"></div>
+    <div class="sumline"><span>Total Revenue</span><b id="revSum">₹0</b></div>
+  </section>
+
+  <!-- ===== EXPENSE PANEL ===== -->
+  <section class="panel" id="panel-expense">
+    <form class="exp-form" id="expForm" autocomplete="off">
+      <div class="frow">
+        <input type="date" name="date" required>
+        <input type="text" name="item" placeholder="Item" required>
+      </div>
+      <div class="frow two">
+        <input type="number" name="amount" inputmode="decimal" min="1" step="1" placeholder="₹ Amount" required>
+        <button type="submit" class="addbtn">+</button>
+      </div>
+    </form>
+
+    <div id="expList"></div>
+    <div class="sumline red"><span>Total Expenses</span><b id="expSum">₹0</b></div>
+  </section>
+
+  <!-- ===== BALANCE PANEL ===== -->
+  <section class="panel" id="panel-balance">
+    <div class="bal-box">
+      <div class="bal-lbl">Remaining Balance</div>
+      <div class="bal-val" id="balBig">₹0</div>
+      <div class="bal-rows">
+        <div class="bal-row"><span>Total Revenue</span><b class="g" id="bRev">₹0</b></div>
+        <div class="bal-row"><span>Total Expenses</span><b class="r" id="bExp">₹0</b></div>
+        <div class="bal-row total"><span>= Remaining</span><b id="bRes">₹0</b></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ================= HELPERS ================= */
+const LS    = 'flatkhata_v3';
+const uid   = () => Math.random().toString(36).slice(2, 9);
+const ym    = d  => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+const today = () => new Date().toISOString().slice(0, 10);
+const fmt   = n  => '₹' + Number(n || 0).toLocaleString('en-IN');
+const esc   = s  => String(s == null ? '' : s).replace(/[&<>"']/g,
+                    m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const $     = id => document.getElementById(id);
+
+/* ================= STATE ================= */
+let state = (() => {
+  try {
+    const raw = localStorage.getItem(LS);
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s && s.months) { if (!s.month) s.month = ym(new Date()); return s; }
+    }
+  } catch (e) {}
+  return { month: ym(new Date()), months: {} };
+})();
+const save = () => localStorage.setItem(LS, JSON.stringify(state));
+
+function getMonth(m) {
+  if (!state.months[m]) {
+    let names = null;
+    const keys = Object.keys(state.months).sort();
+    for (let i = keys.length - 1; i >= 0; i--) {
+      const rv = state.months[keys[i]].revenue;
+      if (rv && rv.length) { names = rv.map(x => x.name); break; }
+    }
+    if (!names) names = ['Flatmate 1','Flatmate 2','Flatmate 3','Flatmate 4','Flatmate 5','Flatmate 6'];
+    state.months[m] = {
+      revenue: names.map(n => ({ id: uid(), name: n, amount: 0 })),
+      expenses: []
+    };
+  }
+  return state.months[m];
+}
+
+/* ================= RENDER ================= */
+function renderRevenue() {
+  const md = getMonth(state.month);
+  $('revList').innerHTML = md.revenue.map(r => `
+    <div class="rev-row">
+      <input class="in-name" data-id="${r.id}" type="text" value="${esc(r.name)}" placeholder="Name">
+      <input class="in-amt" data-id="${r.id}" type="number" inputmode="decimal" min="0" step="1"
+             value="${r.amount ? r.amount : ''}" placeholder="0">
+    </div>
+  `).join('');
+}
+
+function renderExpenses() {
+  const md   = getMonth(state.month);
+  const list = md.expenses.slice().sort((a, b) => b.date.localeCompare(a.date));
+  const el   = $('expList');
+  if (!list.length) { el.innerHTML = '<p class="empty">Abhi koi kharcha nahi likha</p>'; return; }
+  el.innerHTML = list.map(e => `
+    <div class="exp-item">
+      <div class="info">
+        <div class="it">${esc(e.item)}</div>
+        <div class="id">${e.date}</div>
+      </div>
+      <div class="amt">${fmt(e.amount)}</div>
+      <button class="del" data-id="${e.id}" aria-label="delete">✕</button>
+    </div>
+  `).join('');
+}
+
+function updateTotals() {
+  const md  = getMonth(state.month);
+  const rev = md.revenue.reduce((s, r) => s + (Number(r.amount) || 0), 0);
+  const exp = md.expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0);
+  const bal = rev - exp;
+
+  /* Top tabs */
+  $('revTotal').textContent = fmt(rev);
+  $('expTotal').textContent = fmt(exp);
+  $('balTotal').textContent = fmt(bal);
+  $('balTotal').style.color = bal < 0 ? 'var(--red)' : 'var(--indigo)';
+
+  /* Bottom sum lines */
+  $('revSum').textContent = fmt(rev);
+  $('expSum').textContent = fmt(exp);
+
+  /* Balance panel */
+  $('balBig').textContent = fmt(bal);
+  $('balBig').classList.toggle('neg', bal < 0);
+  $('bRev').textContent = fmt(rev);
+  $('bExp').textContent = fmt(exp);
+  $('bRes').textContent = fmt(bal);
+  $('bRes').classList.toggle('neg', bal < 0);
+}
+
+function renderAll() {
+  $('monthPicker').value = state.month;
+  renderRevenue();
+  renderExpenses();
+  updateTotals();
+}
+
+/* ================= EVENTS ================= */
+$('monthPicker').addEventListener('change', e => {
+  if (e.target.value) { state.month = e.target.value; save(); renderAll(); }
+});
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    $('panel-' + t.dataset.tab).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+$('revList').addEventListener('input', e => {
+  const el = e.target, id = el.dataset.id;
+  if (!id) return;
+  const row = getMonth(state.month).revenue.find(r => r.id === id);
+  if (!row) return;
+  if (el.classList.contains('in-name')) row.name   = el.value;
+  else                                  row.amount = Number(el.value) || 0;
+  save();
+  updateTotals();
+});
+
+$('expForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target;
+  const date   = f.date.value || today();
+  const item   = f.item.value.trim();
+  const amount = Number(f.amount.value);
+  if (!item)                  return alert('Item ka naam likho');
+  if (!amount || amount <= 0) return alert('Sahi amount daalo');
+
+  getMonth(state.month).expenses.push({ id: uid(), date, item, amount });
+  save();
+
+  f.reset(); f.date.value = today();
+  renderExpenses(); updateTotals(); f.item.focus();
+});
+
+$('expList').addEventListener('click', e => {
+  const b = e.target.closest('.del');
+  if (!b) return;
+  const md = getMonth(state.month);
+  md.expenses = md.expenses.filter(x => x.id !== b.dataset.id);
+  save(); renderExpenses(); updateTotals();
+});
+
+/* ================= PWA (agar hosting ho) ================= */
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+/* ================= INIT ================= */
+$('expForm').date.value = today();
+renderAll();
+</script>
+</body>
+</html>
