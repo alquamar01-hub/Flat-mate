@@ -113,6 +113,17 @@
   .sumline b{font-size:19px;letter-spacing:-.4px;color:var(--green)}
   .sumline.red b{color:var(--red)}
 
+  /* ---- ACTION BUTTONS ---- */
+  .action-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .abtn{
+    padding:13px 10px;border:none;border-radius:14px;font-size:14px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;
+    transition:.15s;box-shadow:0 2px 5px rgba(0,0,0,.05);font-family:inherit;
+  }
+  .abtn:active{transform:scale(.97)}
+  .abtn.pdf{background:#fff;border:1.5px solid var(--border);color:var(--text)}
+  .abtn.wa{background:#25D366;color:#fff}
+
   /* ---- BALANCE PANEL ---- */
   .bal-box{
     background:var(--card);border:1px solid var(--border);border-radius:20px;
@@ -120,27 +131,81 @@
   }
   .bal-lbl{font-size:11.5px;font-weight:800;text-transform:uppercase;
            letter-spacing:.7px;color:var(--muted);margin-bottom:6px}
-  .bal-val{font-size:38px;font-weight:800;letter-spacing:-1.2px;color:var(--indigo);margin-bottom:20px}
+  .bal-val{
+    font-size:38px;font-weight:800;letter-spacing:-1.2px;
+    color:var(--indigo);margin-bottom:6px;cursor:pointer;user-select:none;
+    transition:.15s;
+  }
+  .bal-val:active{transform:scale(.97)}
   .bal-val.neg{color:var(--red)}
-  .bal-rows{
-    text-align:left;border-top:1.5px dashed var(--border);padding-top:14px;
+  .tap-hint{
+    font-size:11px;color:var(--muted);margin-bottom:16px;
+    font-weight:600;display:flex;align-items:center;justify-content:center;gap:4px;
   }
-  .bal-row{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:9px 0;font-size:14px;font-weight:600;color:var(--muted);
+  .tap-hint .arrow{
+    display:inline-block;transition:transform .2s;
   }
+  .tap-hint.open .arrow{transform:rotate(180deg)}
+  
+  .bal-rows{text-align:left;border-top:1.5px dashed var(--border);padding-top:14px}
+  .bal-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;font-size:14px;font-weight:600;color:var(--muted)}
   .bal-row span:first-child{color:#475569}
   .bal-row b{font-size:15px;font-weight:800;letter-spacing:-.3px}
   .bal-row .g{color:var(--green)}
   .bal-row .r{color:var(--red)}
-  .bal-row.total{
-    border-top:1px solid var(--border);margin-top:4px;padding-top:12px;
-    font-size:14px;color:var(--text);
-  }
+  .bal-row.total{border-top:1px solid var(--border);margin-top:4px;padding-top:12px;font-size:14px;color:var(--text)}
   .bal-row.total b{font-size:17px;color:var(--indigo)}
   .bal-row.total b.neg{color:var(--red)}
 
+  /* ---- CHART ---- */
+  .chart-wrap{display:none;margin-top:14px}
+  .chart-wrap.show{display:block;animation:slideDown .28s ease}
+  @keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+  
+  .chart-card{
+    background:var(--card);border:1px solid var(--border);border-radius:20px;
+    padding:18px 16px;box-shadow:0 2px 8px rgba(15,23,42,.06);
+  }
+  .chart-card h3{
+    font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;
+    color:var(--muted);margin-bottom:16px;text-align:center;
+  }
+  .donut-box{
+    width:200px;height:200px;margin:0 auto 18px;position:relative;
+  }
+  .donut-svg{width:100%;height:100%;display:block}
+  .legend{display:flex;flex-direction:column;gap:0}
+  .lg-row{
+    display:flex;align-items:center;gap:9px;font-size:13px;
+    padding:9px 2px;border-bottom:1px dashed var(--border);
+  }
+  .lg-row:last-child{border-bottom:none}
+  .lg-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 2px #fff inset}
+  .lg-name{flex:1;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#334155}
+  .lg-pct{font-weight:700;color:var(--muted);font-size:11.5px;background:#f1f5f9;padding:2px 7px;border-radius:6px}
+  .lg-amt{font-weight:800;color:var(--red);min-width:62px;text-align:right;font-size:13px}
+
   .empty{text-align:center;color:#94a3b8;font-size:13.5px;padding:26px 0}
+
+  /* ---- PRINT / PDF STYLES ---- */
+  #print-section { display: none; }
+  @media print {
+    body * { visibility: hidden; }
+    #print-section, #print-section * { visibility: visible; }
+    #print-section {
+      display: block !important;
+      position: absolute; left: 0; top: 0; width: 100%;
+      padding: 20px; font-family: Arial, sans-serif; color: #000;
+    }
+    .p-head { text-align: center; margin-bottom: 20px; border-bottom: 2px solid #000; padding-bottom: 10px; }
+    .p-head h2 { margin: 0 0 5px 0; }
+    .p-head p { margin: 0; font-size: 14px; color: #555; }
+    .p-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+    .p-table th, .p-table td { border: 1px solid #ddd; padding: 8px; text-align: left; font-size: 14px; }
+    .p-table th { background: #f5f5f5; }
+    .p-table td:last-child, .p-table th:last-child { text-align: right; }
+    .p-total { text-align: right; font-size: 18px; font-weight: bold; margin-top: 10px; border-top: 2px solid #000; padding-top: 10px; }
+  }
 </style>
 </head>
 <body>
@@ -151,7 +216,6 @@
     <input type="month" id="monthPicker">
   </header>
 
-  <!-- ===== 3 COLUMNS ===== -->
   <div class="tabs">
     <button class="tab rev active" data-tab="revenue">
       <div class="tl">Revenue</div>
@@ -186,6 +250,11 @@
       </div>
     </form>
 
+    <div class="action-btns">
+      <button class="abtn pdf" id="btnPDF">📄 Export PDF</button>
+      <button class="abtn wa" id="btnWA">💬 Share WhatsApp</button>
+    </div>
+
     <div id="expList"></div>
     <div class="sumline red"><span>Total Expenses</span><b id="expSum">₹0</b></div>
   </section>
@@ -195,14 +264,46 @@
     <div class="bal-box">
       <div class="bal-lbl">Remaining Balance</div>
       <div class="bal-val" id="balBig">₹0</div>
+      <div class="tap-hint" id="tapHint">
+        <span>Tap balance to see breakdown</span>
+        <span class="arrow">▾</span>
+      </div>
       <div class="bal-rows">
         <div class="bal-row"><span>Total Revenue</span><b class="g" id="bRev">₹0</b></div>
         <div class="bal-row"><span>Total Expenses</span><b class="r" id="bExp">₹0</b></div>
         <div class="bal-row total"><span>= Remaining</span><b id="bRes">₹0</b></div>
       </div>
     </div>
+
+    <!-- CHART (hidden by default, opens on tap) -->
+    <div class="chart-wrap" id="chartWrap">
+      <div class="chart-card">
+        <h3>📊 Expense Breakdown</h3>
+        <div class="donut-box" id="donutBox"></div>
+        <div class="legend" id="chartLegend"></div>
+      </div>
+    </div>
   </section>
 
+</div>
+
+<!-- Hidden Print Section for PDF -->
+<div id="print-section">
+  <div class="p-head">
+    <h2>Flat Khata - Expenses</h2>
+    <p id="pMonth"></p>
+  </div>
+  <table class="p-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Item</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <tbody id="pBody"></tbody>
+  </table>
+  <div class="p-total" id="pTotal"></div>
 </div>
 
 <script>
@@ -281,23 +382,23 @@ function updateTotals() {
   const exp = md.expenses.reduce((s, e) => s + (Number(e.amount) || 0), 0);
   const bal = rev - exp;
 
-  /* Top tabs */
   $('revTotal').textContent = fmt(rev);
   $('expTotal').textContent = fmt(exp);
   $('balTotal').textContent = fmt(bal);
   $('balTotal').style.color = bal < 0 ? 'var(--red)' : 'var(--indigo)';
 
-  /* Bottom sum lines */
   $('revSum').textContent = fmt(rev);
   $('expSum').textContent = fmt(exp);
 
-  /* Balance panel */
   $('balBig').textContent = fmt(bal);
   $('balBig').classList.toggle('neg', bal < 0);
   $('bRev').textContent = fmt(rev);
   $('bExp').textContent = fmt(exp);
   $('bRes').textContent = fmt(bal);
   $('bRes').classList.toggle('neg', bal < 0);
+
+  // Agar chart khula hai to use bhi refresh karo
+  if (chartVisible) buildChart();
 }
 
 function renderAll() {
@@ -305,6 +406,91 @@ function renderAll() {
   renderRevenue();
   renderExpenses();
   updateTotals();
+}
+
+/* ================= CHART (DONUT) ================= */
+let chartVisible = false;
+const COLORS = ['#ef4444','#f97316','#eab308','#22c55e','#3b82f6',
+                '#8b5cf6','#ec4899','#06b6d4','#84cc16','#f43f5e',
+                '#14b8a6','#a855f7'];
+
+function toggleChart() {
+  chartVisible = !chartVisible;
+  const wrap = $('chartWrap');
+  const hint = $('tapHint');
+
+  if (chartVisible) {
+    buildChart();
+    wrap.classList.add('show');
+    hint.classList.add('open');
+    hint.firstElementChild.textContent = 'Tap balance to hide';
+  } else {
+    wrap.classList.remove('show');
+    hint.classList.remove('open');
+    hint.firstElementChild.textContent = 'Tap balance to see breakdown';
+  }
+}
+
+function buildChart() {
+  const md  = getMonth(state.month);
+  const box = $('donutBox');
+  const lg  = $('chartLegend');
+
+  if (!md.expenses.length) {
+    box.innerHTML = '<div class="empty" style="padding:60px 0">Koi kharcha nahi hai</div>';
+    lg.innerHTML  = '';
+    return;
+  }
+
+  // Same item naam wale ko group karo (case-insensitive)
+  const groups = {};
+  md.expenses.forEach(e => {
+    const key = (e.item || 'other').trim().toLowerCase();
+    if (!groups[key]) groups[key] = { label: (e.item || 'Other').trim(), value: 0 };
+    groups[key].value += Number(e.amount) || 0;
+  });
+
+  const sorted = Object.values(groups).sort((a, b) => b.value - a.value);
+  const total  = sorted.reduce((s, g) => s + g.value, 0);
+
+  // Donut circles banao
+  const cx = 100, cy = 100, r = 72, sw = 28;
+  const circ = 2 * Math.PI * r;
+  let offset = 0;
+  let paths  = '';
+
+  sorted.forEach((g, i) => {
+    const frac  = g.value / total;
+    const dash  = frac * circ;
+    const color = COLORS[i % COLORS.length];
+    g.color = color;
+
+    paths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}"
+              stroke-width="${sw}" stroke-dasharray="${dash} ${circ - dash}"
+              stroke-dashoffset="${-offset}"
+              transform="rotate(-90 ${cx} ${cy})"
+              style="transition:stroke-dasharray .3s" />`;
+    offset += dash;
+  });
+
+  // Center me Total likho
+  paths += `<text x="${cx}" y="94" text-anchor="middle" fill="#64748b"
+            font-size="9" font-weight="800" letter-spacing="0.6" font-family="Arial">TOTAL</text>`;
+  paths += `<text x="${cx}" y="116" text-anchor="middle" fill="#0f172a"
+            font-size="16" font-weight="800" font-family="Arial">${fmt(total)}</text>`;
+
+  box.innerHTML = `<svg viewBox="0 0 200 200" class="donut-svg">${paths}</svg>`;
+
+  // Legend
+  lg.innerHTML = sorted.map(g => {
+    const pct = ((g.value / total) * 100).toFixed(1);
+    return `<div class="lg-row">
+      <span class="lg-dot" style="background:${g.color}"></span>
+      <span class="lg-name">${esc(g.label)}</span>
+      <span class="lg-pct">${pct}%</span>
+      <span class="lg-amt">${fmt(g.value)}</span>
+    </div>`;
+  }).join('');
 }
 
 /* ================= EVENTS ================= */
@@ -357,10 +543,50 @@ $('expList').addEventListener('click', e => {
   save(); renderExpenses(); updateTotals();
 });
 
-/* ================= PWA (agar hosting ho) ================= */
-if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
+/* Click on big balance → toggle chart */
+$('balBig').addEventListener('click', toggleChart);
+
+/* ================= PDF & WHATSAPP ================= */
+$('btnPDF').addEventListener('click', () => {
+  const md = getMonth(state.month);
+  if (!md.expenses.length) return alert('Koi kharcha nahi hai PDF banane ke liye.');
+
+  $('pMonth').textContent = 'Month: ' + state.month;
+  const sorted = md.expenses.slice().sort((a,b) => a.date.localeCompare(b.date));
+  let tbody = '', total = 0;
+
+  sorted.forEach(e => {
+    tbody += `<tr><td>${e.date}</td><td>${esc(e.item)}</td><td>${fmt(e.amount)}</td></tr>`;
+    total += Number(e.amount);
+  });
+
+  $('pBody').innerHTML = tbody;
+  $('pTotal').textContent = 'Total Expenses: ' + fmt(total);
+  window.print();
+});
+
+$('btnWA').addEventListener('click', () => {
+  const md = getMonth(state.month);
+  if (!md.expenses.length) return alert('Koi kharcha nahi hai share karne ke liye.');
+
+  let text = `*🏠 Flat Khata - Expenses*\n📅 *Month:* ${state.month}\n\n`;
+  let total = 0;
+  const sorted = md.expenses.slice().sort((a,b) => b.date.localeCompare(a.date));
+
+  sorted.forEach((e, index) => {
+    text += `${index + 1}. ${e.date} | *${esc(e.item)}* - ${fmt(e.amount)}\n`;
+    total += Number(e.amount);
+  });
+
+  text += `\n💰 *Total Kharcha: ${fmt(total)}*`;
+
+  if (navigator.share) {
+    navigator.share({ title: 'Flat Khata Expenses', text: text })
+      .catch(err => console.log('Share failed', err));
+  } else {
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+  }
+});
 
 /* ================= INIT ================= */
 $('expForm').date.value = today();
